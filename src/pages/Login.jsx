@@ -17,7 +17,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-screen bg-gray-300">
       <div className="flex flex-col items-center bg-white p-8 rounded shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out">
         <div className="grid grid-flow-col auto-cols-max gap-2 mt-4">
           <GiSpades
@@ -51,7 +51,12 @@ const Login = () => {
           />
         <button
           onClick={handleLogin}
-          className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-500 transition-all duration-300 ease-in-out w-64"
+          disabled={!username}
+          className={`px-4 py-2 rounded w-64 text-white transition-all duration-300 ease-in-out ${
+            username
+              ? "bg-purple-700 hover:bg-purple-500"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
         >
           Start Quiz
         </button>
