@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GiSpades } from "react-icons/gi";
 import { FaRegHeart } from "react-icons/fa";
@@ -7,17 +7,35 @@ import { PiClub } from "react-icons/pi";
 
 const Login = () => {
   const [username, setUsername] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const navigate = useNavigate();
 
+  // Fungsi untuk memulai login dengan modal
   const handleLogin = () => {
     if (username) {
-      localStorage.setItem("username", username);
-      navigate("/quiz");
+      setShowModal(true); // Tampilkan modal setelah tombol ditekan
     }
   };
 
+  // Efek untuk countdown ketika modal tampil
+  useEffect(() => {
+    let timer;
+    if (showModal && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prevCount) => prevCount - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      localStorage.setItem("username", username);
+      navigate("/quiz");
+    }
+
+    return () => clearInterval(timer); // Bersihkan timer ketika modal ditutup atau component unmount
+  }, [showModal, countdown, username, navigate]);
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
+      {/* Login Form */}
       <div className="flex flex-col items-center bg-white p-8 rounded shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out">
         <div className="grid grid-flow-col auto-cols-max gap-2 mt-4">
           <GiSpades
@@ -48,7 +66,7 @@ const Login = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="border border-gray-300 p-2 rounded mb-4 w-64 focus:border-purple-700 focus:outline-none transition-colors duration-200"
-          />
+        />
         <button
           onClick={handleLogin}
           disabled={!username}
@@ -61,6 +79,19 @@ const Login = () => {
           Start Quiz
         </button>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h3 className="text-2xl font-bold mb-4 text-purple-700">
+              Welcome, {username}!
+            </h3>
+            <p className="text-lg">Starting the quiz in</p>
+            <p className="text-2xl font-bold">{countdown}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
