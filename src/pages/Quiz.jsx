@@ -176,7 +176,7 @@ const Quiz = () => {
                   className={`py-4 bg-purple-200 text-purple-700 font-bold rounded-lg flex items-center justify-center
                   ${
                     userAnswers[currentQuestion] === answer
-                      ? "bg-purple-700 text-purple-200"
+                      ? "bg-purple-700 text-white"
                       : ""
                   }`}
                 >
