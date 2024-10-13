@@ -52,7 +52,17 @@ const Quiz = () => {
       }
     };
 
-    fetchQuestions();
+    const savedState = JSON.parse(localStorage.getItem('quizState'));
+    if (savedState) {
+      setQuestions(savedState.questions);
+      setCurrentQuestion(savedState.currentQuestion);
+      setScore(savedState.score);
+      setTimer(savedState.timer);
+      setUserAnswers(savedState.userAnswers);
+      setShuffledAnswers(savedState.shuffledAnswers);
+    } else {
+      fetchQuestions();
+    }
   }, []);
 
   useEffect(() => {
@@ -64,6 +74,23 @@ const Quiz = () => {
     }, 1000);
     return () => clearInterval(countdown);
   }, [timer, navigate, questions.length]);
+
+  useEffect(() => {
+    const saveState = () => {
+      const state = {
+        questions,
+        currentQuestion,
+        score,
+        timer,
+        userAnswers,
+        shuffledAnswers
+      };
+      localStorage.setItem('quizState', JSON.stringify(state));
+    };
+
+    window.addEventListener('beforeunload', saveState);
+    return () => window.removeEventListener('beforeunload', saveState);
+  }, [questions, currentQuestion, score, timer, userAnswers, shuffledAnswers]);
 
   const handleAnswer = (answer) => {
     const newAnswers = [...userAnswers];
@@ -88,6 +115,7 @@ const Quiz = () => {
   };
 
   const handleFinishQuiz = () => {
+    localStorage.removeItem('quizState');
     navigate("/result", { state: { score, total: questions.length } });
   };
 
@@ -148,7 +176,7 @@ const Quiz = () => {
                   className={`py-4 bg-purple-200 text-purple-700 font-bold rounded-lg flex items-center justify-center
                   ${
                     userAnswers[currentQuestion] === answer
-                      ? "bg-purple-800 text-purple-300"
+                      ? "bg-purple-700 text-purple-200"
                       : ""
                   }`}
                 >

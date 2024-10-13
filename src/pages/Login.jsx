@@ -9,16 +9,31 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [hasUnfinishedQuiz, setHasUnfinishedQuiz] = useState(false);
   const navigate = useNavigate();
 
-  // Fungsi untuk memulai login dengan modal
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+
+    const quizState = localStorage.getItem("quizState");
+    if (quizState) {
+      setHasUnfinishedQuiz(true);
+    }
+  }, []);
+
   const handleLogin = () => {
     if (username) {
-      setShowModal(true); // Tampilkan modal setelah tombol ditekan
+      setShowModal(true);
     }
   };
 
-  // Efek untuk countdown ketika modal tampil
+  const handleResumeQuiz = () => {
+    navigate("/quiz");
+  };
+
   useEffect(() => {
     let timer;
     if (showModal && countdown > 0) {
@@ -30,32 +45,17 @@ const Login = () => {
       navigate("/quiz");
     }
 
-    return () => clearInterval(timer); // Bersihkan timer ketika modal ditutup atau component unmount
+    return () => clearInterval(timer);
   }, [showModal, countdown, username, navigate]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
-      {/* Login Form */}
       <div className="flex flex-col items-center bg-white p-8 rounded shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out">
         <div className="grid grid-flow-col auto-cols-max gap-2 mt-4">
-          <GiSpades
-            size="20px"
-            className="hover:scale-125 transition-transform duration-300 ease-in-out"
-          />
-          <FaRegHeart
-            color="#7E22CE"
-            size="20px"
-            className="hover:scale-125 transition-transform duration-300 ease-in-out"
-          />
-          <BsFillSuitDiamondFill
-            size="20px"
-            className="hover:scale-125 transition-transform duration-300 ease-in-out"
-          />
-          <PiClub
-            color="#7E22CE"
-            size="20px"
-            className="hover:scale-125 transition-transform duration-300 ease-in-out"
-          />
+          <GiSpades size="20px" className="hover:scale-125 transition-transform duration-300 ease-in-out" />
+          <FaRegHeart color="#7E22CE" size="20px" className="hover:scale-125 transition-transform duration-300 ease-in-out" />
+          <BsFillSuitDiamondFill size="20px" className="hover:scale-125 transition-transform duration-300 ease-in-out" />
+          <PiClub color="#7E22CE" size="20px" className="hover:scale-125 transition-transform duration-300 ease-in-out" />
         </div>
         <h2 className="text-3xl font-bold text-purple-700 mb-8 mt-4">
           Quiz App
@@ -78,9 +78,16 @@ const Login = () => {
         >
           Start Quiz
         </button>
+        {hasUnfinishedQuiz && (
+          <button
+            onClick={handleResumeQuiz}
+            className="mt-4 px-4 py-2 rounded w-64 text-white bg-teal-600 hover:bg-teal-500 transition-all duration-300 ease-in-out"
+          >
+            Resume Quiz
+          </button>
+        )}
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
