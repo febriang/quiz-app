@@ -31,7 +31,6 @@ const Result = () => {
     navigate("/quiz");
   };
 
-  // Fungsi untuk logout
   const handleLogout = () => {
     localStorage.removeItem("username"); 
     localStorage.removeItem("highScore"); 
